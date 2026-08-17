@@ -1,51 +1,75 @@
 import sys
 
 from banker_ai.database import initialize
-from banker_ai.api.server import run
+from banker_ai.api.server import run as server
 from banker_ai.ai.agent import agent
-from banker_ai.builder.app_builder import create_app
+from banker_ai.builder.code_generator import generate_project
+from banker_ai.builder.runner import build, test, run
+
+
+def usage():
+    print("""
+Banker AI
+
+Commands:
+
+  banker server
+  banker ai <message>
+
+  banker create app <name> <description>
+
+  banker build <project>
+  banker test <project>
+  banker run <project>
+""")
 
 
 def main():
     initialize()
-
     args = sys.argv[1:]
 
     if not args:
-        print("Banker AI")
-        print()
-        print("Commands:")
-        print("  banker server")
-        print("  banker ai <message>")
-        print("  banker create app <name>")
+        usage()
         return
 
     command = args[0]
 
     if command == "server":
-        run()
+        server()
         return
 
     if command == "ai":
         message = " ".join(args[1:])
         print("Banker AI")
         print("Intent:", agent.understand(message))
-        print("Request:", message)
+        print(message)
         return
 
-    if command == "create" and len(args) >= 3:
+    if command == "create" and len(args) >= 4:
         kind = args[1]
-        name = " ".join(args[2:])
 
         if kind == "app":
-            project = create_app(name)
-            print("Created:", project)
+            name = args[2]
+            description = " ".join(args[3:])
+
+            project = generate_project(name, description)
+
+            print(f"Created {project}")
             return
 
-        print("Unknown project type:", kind)
+    if command == "build" and len(args) == 2:
+        build(args[1])
         return
 
-    print("Unknown command:", command)
+    if command == "test" and len(args) == 2:
+        test(args[1])
+        return
+
+    if command == "run" and len(args) == 2:
+        run(args[1])
+        return
+
+    usage()
 
 
 if __name__ == "__main__":
