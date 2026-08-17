@@ -52,6 +52,11 @@ class Handler(BaseHTTPRequestHandler):
         })
 
 
-def run(host="127.0.0.1", port=8080):
+def run(host="0.0.0.0", port=None):
+    import os
+
+    if port is None:
+        port = int(os.environ.get("PORT", "8080"))
+
     print(f"Banker AI listening on http://{host}:{port}")
     HTTPServer((host, port), Handler).serve_forever()
