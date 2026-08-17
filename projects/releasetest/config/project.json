@@ -1,0 +1,6 @@
+{
+  "name": 'ReleaseTest',
+  "description": 'Test generated application',
+  "generator": "Banker AI",
+  "language": "python"
+}
